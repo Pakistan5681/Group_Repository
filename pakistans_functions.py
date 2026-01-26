@@ -68,6 +68,26 @@ def idiot_proof_general(input_statement, output_type = "integer", incorrect_inpu
 
             print(incorrect_input_message)
 
+def idiot_proof_yes_no(input_statement, incorrect_input_message = "Answer 'yes' or 'no'"):
+    """
+    Takes in user input and returns a bool
+
+    Returns True for "yes" and False for "no"
+
+    Automatically sets input to lowercase and accepts y/n
+    """
+
+    while True:
+        user_input = input(input_statement).strip().lower()
+
+        if user_input == "yes" or user_input == "y":
+            return True
+        elif user_input == "no" or user_input == "n":
+            return False
+        else:
+            print(incorrect_input_message)
+            print(" ")
+
 def idiot_proof_specific(input_statement, correct_inputs, incorrect_input_message = "That input is invalid"):
     """
     Takes user input until it matches one of the variables in correct_inputs 
