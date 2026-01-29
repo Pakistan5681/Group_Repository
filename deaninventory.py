@@ -4,7 +4,6 @@ inventories = {}
 # XP counter
 xp = 0
 
-
 def inventory(name1):
     global xp
 
@@ -32,7 +31,7 @@ def inventory(name1):
             return
 
         item_name = input("Item name: ") #actually add item
-        value1 = int(input("Item vlalue: "))
+        value1 = int(input("Item vlalue: For weapons calue is damage for armor its defense for items its xp value: "))
 
 
         inv[category][item_name] = value1 #use itme name and value
