@@ -21,7 +21,7 @@ def main():
                "rock": 12,
                "spear": 8,
                "small dinky hammer": 12}
-    races = ["human", "elf", "half-orc", "more to come"]
+    races = ["human", "elf", "half-orc", "kratos"]
     print("This is the list of classes!")
     t.sleep(1.5)
     for x in classes:
