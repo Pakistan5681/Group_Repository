@@ -96,8 +96,11 @@ def adjust_stats():
         xp = stats[character]["xp"]
         xp_to_add = pf.idiot_proof_general(f"How much xp do you want to add to {character}? ")
 
+        xp += xp_to_add
+
         if xp > xp_requirements[level]:
-            
+            stats[character]["xp"] -= xp_requirements[level]
+            stats[character]["level"] += 1
 
 #KH 2nd skills
 
@@ -183,11 +186,6 @@ def create_character():
 
 
 def manage_inventory():
-        # store inventories for all characters
-    inventories = {}
-
-    # XP counter
-    xp = 0
 
     def inventory(name1):
         global xp
@@ -202,8 +200,7 @@ def manage_inventory():
 
         inv = inventories[name1]
 
-        choice = input("Add item (1), View inventory (2), Sell item (3): ")
-    
+        choice = pf.idiot_proof_specific("Add item (1), View inventory (2), Sell item (3): ", ["1", "2", "3"])
         # ADD ITEM
         if choice == "1":
             category = input("Category (weapons / armor / items): ").lower()
@@ -241,7 +238,7 @@ def manage_inventory():
             for item in inv["items"]:
                 print(item, ":", inv["items"][item])
 
-            sell_item = input("Item to rell: ")
+            sell_item = input("Item to sell: ")
 
             if sell_item in inv["items"]:
                 xp += inv["items"][sell_item]
