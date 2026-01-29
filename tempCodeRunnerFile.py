@@ -1,0 +1,1 @@
+print(name1, "Inventory:")
