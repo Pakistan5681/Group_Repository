@@ -1,10 +1,13 @@
 import pakistans_functions as pf
+import time as t
+import random as r
 
 #--- Character Stats ---
 # All character stats are referenced by name
+stats = {"John Test III": {'strength': 9, 'dexterity': 9, 'constitution': 15, 'intelligence': 15, 'charisma': 12, 'wisdom': 16, 'armor class': 7, 'xp': 0, 'weapon': 12, 'class': 'mage', 'race': 'elf'}}
+names = ["John Test III"]
 
-stats = {"john test" : {"xp": 0, "weapon" : "gun", "level" : 1}}
-names = []
+inventories = {}
 
 warrior_skills = {"Power Strike", "Shield Block", "Whirlwind", "Battle Cry"}
 rogue_skills   = {"Backstab", "Lockpick", "Evasion", "Shadow Step"}
@@ -73,15 +76,16 @@ def menu():
     print("2. Create Character")
     print("3. Adjust Character Inventory")
     print(" ")
-    action = pf.idiot_proof_num_range("Type the number of the desired option", 1, 3)
+    action = pf.idiot_proof_num_range("Type the number of the desired option ", 1, 3)
 
     match action:
         case 1:
             adjust_stats()
         case 2:
-            create_character()
+            char_name, stats[char_name] = create_character()
+            print(stats[char_name])
         case 3:
-            manage_inventory()
+            manage_inventory(names)
         case _:
             raise Exception("Something horrendous has occured. If you are recieving this message, we are cooked")
         
@@ -185,10 +189,9 @@ def create_character():
 
 
 
-def manage_inventory():
-
+def manage_inventory(names):
     def inventory(name1):
-        global xp
+        global xpn
 
         # create inventory if character does not exist
         if name1 not in inventories: #create a inventory FOr the charachter
@@ -252,7 +255,9 @@ def manage_inventory():
             print("Invalid option, try again")
             return
 
-
+    if bool(names):
+        character_to_adjust = pf.idiot_proof_specific("What characters inventory do you want to adjust? ", names, "you dont have a character with that name")
+        inventory(character_to_adjust)
 
     #easy wy to use thic can be: 
     ''' new_character = input("Enter new character name: ")
@@ -260,4 +265,87 @@ def manage_inventory():
 
     '''characters[name] = {"hp": 100, "xp": 0}'''
 
-#bruh
+#EMH
+
+
+def create_character():
+    print("Welcome to the character maker!")
+    t.sleep(1.5)
+    stren = r.randint(5,20)
+    cons = r.randint(5,20)
+    dex = r.randint(5,20)
+    intell = r.randint(5,20)
+    rizz = r.randint(5,20)
+    wis = r.randint(5,20)
+    ac = r.randint(5,20)
+    name = input("Please enter the name of your character!\n")
+    t.sleep(1.5)
+    inventory = {}
+    classes = ["warrior", "rogue", "mage", "cleric"]
+    weapons = {"longsword": 10,
+               "dagger": 6,
+               "rock": 12,
+               "spear": 8,
+               "small dinky hammer": 12}
+    races = ["human", "elf", "half-orc", "kratos"]
+    print("This is the list of classes!")
+    t.sleep(1.5)
+    for x in classes:
+        print(x)
+    t.sleep(1.5)
+    while True:
+        choice1 = input("Now choose your class!\n").strip().lower()
+        t.sleep(1.5)
+        if choice1 in classes:
+            print(f"You have chosen {choice1}!")
+            if choice1 == "warrior":
+                dex += 3
+                break
+            elif choice1 == "rogue":
+                wis += 3
+                intell -= 3
+                break
+            elif choice1 == "mage":
+                stren += 2
+                break
+            elif choice1 == "cleric":
+                rizz += 3
+                break
+        else:
+            print("That ain't a class!")
+    t.sleep(1.5)
+    print("Here is the list of races!")
+    t.sleep(1.5)
+    for x in races:
+        print(x)
+    t.sleep(1.5)
+    while True:
+        choice2 = input("Now, what race will you choose?\n").strip().lower()
+        if choice2 in races:
+            print(f"You have chosen {choice2}!")
+            break
+        else:
+            print("That ain't an option!")
+    t.sleep(1.5)
+    print("Now finally for your weapon!")
+    t.sleep(1.5)
+    for x in weapons:
+        print(x)
+    t.sleep(1.5)
+    while True:
+        choice3 = input("Which one shall you choose?\n").strip().lower()
+        if choice3 in weapons.keys():
+            print(f"You have chosen {choice3}!")
+            t.sleep(1.5)
+            print("It will now be added to your inventory.")
+            weap = weapons[choice3]
+            inventory[choice3] = weap
+            break
+    t.sleep(1.5)
+    print("Now you have made your basic character!")
+    t.sleep(1.5)
+    print(f"Here are your final stats!\nStrength is {stren}\nDexterity is {dex}\nConstitution is {cons}\nIntelligence is {intell}\nCharisma is {rizz}\nWisdom is {wis}\nArmor Class is {ac}")
+
+    return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "weapon": weap, "class": choice1, "race": choice2}
+
+menu()
