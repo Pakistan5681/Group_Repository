@@ -183,12 +183,6 @@ def skill_menu(character):
             if unlock_skill(character, op[index]):
                 print("Unlocked:", op[index])
 
-
-def create_character():
-    pass
-
-
-
 def manage_inventory(names):
     def inventory(name1):
         global xpn
@@ -223,7 +217,7 @@ def manage_inventory(names):
         elif choice == "2":
             print("/n", name1, "Inventory")
             for category in inv:
-                print("", category.capitalize())
+                print("", category)
 
                 if len(inv[category]) == 0:
                     print("Empty")
@@ -259,18 +253,11 @@ def manage_inventory(names):
         character_to_adjust = pf.idiot_proof_specific("What characters inventory do you want to adjust? ", names, "you dont have a character with that name")
         inventory(character_to_adjust)
 
-    #easy wy to use thic can be: 
-    ''' new_character = input("Enter new character name: ")
-    inventory(new_character)'''
-
-    '''characters[name] = {"hp": 100, "xp": 0}'''
-
 #EMH
-
 
 def create_character():
     print("Welcome to the character maker!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     stren = r.randint(5,20)
     cons = r.randint(5,20)
     dex = r.randint(5,20)
@@ -279,7 +266,7 @@ def create_character():
     wis = r.randint(5,20)
     ac = r.randint(5,20)
     name = input("Please enter the name of your character!\n")
-    t.sleep(1.5)
+    t.sleep(0.7)
     inventory = {}
     classes = ["warrior", "rogue", "mage", "cleric"]
     weapons = {"longsword": 10,
@@ -289,13 +276,13 @@ def create_character():
                "small dinky hammer": 12}
     races = ["human", "elf", "half-orc", "kratos"]
     print("This is the list of classes!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     for x in classes:
         print(x)
-    t.sleep(1.5)
+    t.sleep(0.7)
     while True:
         choice1 = input("Now choose your class!\n").strip().lower()
-        t.sleep(1.5)
+        t.sleep(0.7)
         if choice1 in classes:
             print(f"You have chosen {choice1}!")
             if choice1 == "warrior":
@@ -313,12 +300,12 @@ def create_character():
                 break
         else:
             print("That ain't a class!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     print("Here is the list of races!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     for x in races:
         print(x)
-    t.sleep(1.5)
+    t.sleep(0.7)
     while True:
         choice2 = input("Now, what race will you choose?\n").strip().lower()
         if choice2 in races:
@@ -326,24 +313,24 @@ def create_character():
             break
         else:
             print("That ain't an option!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     print("Now finally for your weapon!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     for x in weapons:
         print(x)
-    t.sleep(1.5)
+    t.sleep(0.7)
     while True:
         choice3 = input("Which one shall you choose?\n").strip().lower()
         if choice3 in weapons.keys():
             print(f"You have chosen {choice3}!")
-            t.sleep(1.5)
+            t.sleep(0.7)
             print("It will now be added to your inventory.")
             weap = weapons[choice3]
             inventory[choice3] = weap
             break
-    t.sleep(1.5)
+    t.sleep(0.7)
     print("Now you have made your basic character!")
-    t.sleep(1.5)
+    t.sleep(0.7)
     print(f"Here are your final stats!\nStrength is {stren}\nDexterity is {dex}\nConstitution is {cons}\nIntelligence is {intell}\nCharisma is {rizz}\nWisdom is {wis}\nArmor Class is {ac}")
 
     return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "weapon": weap, "class": choice1, "race": choice2}
