@@ -4,10 +4,11 @@ import random as r
 
 #--- Character Stats ---
 # All character stats are referenced by name
-stats = {"John Test III": {'strength': 9, 'dexterity': 9, 'constitution': 15, 'intelligence': 15, 'charisma': 12, 'wisdom': 16, 'armor class': 7, 'xp': 0, 'weapon': 12, 'class': 'mage', 'race': 'elf'}}
-names = ["John Test III"]
+stats = {"John": {'strength': 9, 'dexterity': 9, 'constitution': 15, 'intelligence': 15, 'charisma': 12, 'wisdom': 16, 'armor class': 7, 'xp': 0, "level": 1, 'weapon': 12, 'class': 'mage', 'race': 'elf', "name" : "John"}}
+skills = {"John": []}
+names = ["John"]
 
-inventories = {}
+inventories = {"John" : ["Magic Missile", "Arcane Focus", "Mana Surge"]}
 
 warrior_skills = {"Power Strike", "Shield Block", "Whirlwind", "Battle Cry"}
 rogue_skills   = {"Backstab", "Lockpick", "Evasion", "Shadow Step"}
@@ -26,16 +27,16 @@ skill_data = {
     "Arcane Focus": {"class": "Mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 4}},
     "Mana Surge":   {"class": "Mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 6}},
     "Fireball":     {"class": "Mage", "min_level": 5, "prereq": {"Magic Missile"}, "required_stats": {"intelligence": 10}},
-    "Heal":         {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"piety": 5}},
-    "Smite":        {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"piety": 4}},
-    "Divine Shield":{"class": "Cleric", "min_level": 5, "prereq": set(), "required_stats": {"piety": 10}},
-    "Greater Heal": {"class": "Cleric", "min_level": 5, "prereq": {"Heal"}, "required_stats": {"piety": 12}},
+    "Heal":         {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 5}},
+    "Smite":        {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 4}},
+    "Divine Shield":{"class": "Cleric", "min_level": 5, "prereq": set(), "required_stats": {"wisdom": 10}},
+    "Greater Heal": {"class": "Cleric", "min_level": 5, "prereq": {"Heal"}, "required_stats": {"wisdom": 12}},
 }
 class_skills = {
-    "Warrior": warrior_skills,
-    "Rogue": rogue_skills,
-    "Mage": mage_skills,
-    "Cleric": cleric_skills,
+    "warrior": warrior_skills,
+    "rogue": rogue_skills,
+    "mage": mage_skills,
+    "cleric": cleric_skills,
 }
 
 xp_requirements = {
@@ -82,44 +83,48 @@ def menu():
         case 1:
             adjust_stats()
         case 2:
-            char_name, stats[char_name] = create_character()
+            char_name, stats[char_name], inventory = create_character()
+            inventories[char_name] = inventory
+            names.append(char_name)
+            skills[char_name] = []
             print(stats[char_name])
         case 3:
-            manage_inventory(names)
+            manage_inventory(names, inventories)
         case _:
             raise Exception("Something horrendous has occured. If you are recieving this message, we are cooked")
         
 
 
 def adjust_stats():
-    character = pf.idiot_proof_specific("What characters stats do you want to adjust", names, "You dont have a character with that name")
+    character = pf.idiot_proof_specific("What characters stats do you want to adjust ", names, "You dont have a character with that name")
     stat_to_change = pf.idiot_proof_specific("What stat do you want to adjust?\n'xp' or 'weapon' ", ["xp", "weapon"], "Thats not a valid stat")
 
     if stat_to_change == "xp":
-        level = stats[character]["level"]
-        xp = stats[character]["xp"]
         xp_to_add = pf.idiot_proof_general(f"How much xp do you want to add to {character}? ")
+        
+        stats[character]["xp"] += xp_to_add
 
-        xp += xp_to_add
-
-        if xp > xp_requirements[level]:
-            stats[character]["xp"] -= xp_requirements[level]
+        while stats[character]["xp"] > xp_requirements[stats[character]["level"]]:
+            stats[character]["xp"] -= xp_requirements[stats[character]["level"]]
             stats[character]["level"] += 1
+
+            skill_menu(stats[character], skills)
+            print(stats[character]["level"])
 
 #KH 2nd skills
 
-def ensure_skill_set(character):
-    if "skills" not in character:
+def ensure_skill_set(character, skills):
+    if character not in skills.values():
         character["skills"] = set()
 
-def give_starter_skills(character):
+def give_starter_skills(character, skills):
     ensure_skill_set(character)
     for s in class_skills.get(character["class"], set()):
         if skill_data[s]["min_level"] == 1:
-            character["skills"].add(s)
+            skills[character] = s
 
-def can_unlock_skill(character, skill):
-    ensure_skill_set(character)
+def can_unlock_skill(character, skill, skills):
+    ensure_skill_set(character, skills)
     info = skill_data[skill]
 
     if character["class"] != info["class"]:
@@ -128,48 +133,48 @@ def can_unlock_skill(character, skill):
         return False
     
     for stat, req in info["required_stats"].items():
-        if character["stats"].get(stat, 0) < req:
+        if stats[character].get(stat, 0) < req:
             return False
     
     for p in info["prereq"]:
-        if p not in character["skills"]:
+        if p not in skills[character]:
             return False
     return True
 
-def unlock_skill(character, skill):
+def unlock_skill(character, skill, skills):
     ensure_skill_set(character)
-    if skill in character["skills"]:
+    if skill in skills[character]:
         return False
     if can_unlock_skill(character, skill):
-        character["skills"].add(skill)
+        skills[character] = skill
         return True
     return False
 
-def unlock_level_milestone_skills(character):
+def unlock_level_milestone_skills(character, skills):
     ensure_skill_set(character)
     gained = []
     if character["level"] in {5, 10, 15, 20}:
         for s in class_skills[character["class"]]:
             if skill_data[s]["min_level"] == character["level"]:
                 if can_unlock_skill(character, s):
-                    character["skills"].add(s)
+                    skills["skills"] = s
                     gained.append(s)
     return gained
 
-def get_unlockable_skills(character):
-    ensure_skill_set(character)
+def get_unlockable_skills(character, skills):
+    ensure_skill_set(character, skills)
     result = []
     for s in class_skills[character["class"]]:
-        if s not in character["skills"] and can_unlock_skill(character, s):
+        if s not in skills[character["name"]] and can_unlock_skill(character, s, skills):
             result.append(s)
     return result
 
 
-def skill_menu(character):
-    ensure_skill_set(character)
-    print("Current skills:", character["skills"])
-    op = get_unlockable_skills(character)
-    if not op:
+def skill_menu(character, skills):
+    ensure_skill_set(character, skills)
+    if bool(skills[character]): print(f"Current skills: {skills[character["name"]]}")
+    op = get_unlockable_skills(character, skills)
+    if not bool(op):
         print("No unlockable skills")
         return
     
@@ -184,14 +189,8 @@ def skill_menu(character):
                 print("Unlocked:", op[index])
 
 
-def create_character():
-    pass
-
-
-
-def manage_inventory(names):
+def manage_inventory(names, inventories):
     def inventory(name1):
-        global xpn
 
         # create inventory if character does not exist
         if name1 not in inventories: #create a inventory FOr the charachter
@@ -258,14 +257,6 @@ def manage_inventory(names):
     if bool(names):
         character_to_adjust = pf.idiot_proof_specific("What characters inventory do you want to adjust? ", names, "you dont have a character with that name")
         inventory(character_to_adjust)
-
-    #easy wy to use thic can be: 
-    ''' new_character = input("Enter new character name: ")
-    inventory(new_character)'''
-
-    '''characters[name] = {"hp": 100, "xp": 0}'''
-
-#EMH
 
 
 def create_character():
@@ -346,6 +337,6 @@ def create_character():
     t.sleep(1.5)
     print(f"Here are your final stats!\nStrength is {stren}\nDexterity is {dex}\nConstitution is {cons}\nIntelligence is {intell}\nCharisma is {rizz}\nWisdom is {wis}\nArmor Class is {ac}")
 
-    return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "weapon": weap, "class": choice1, "race": choice2}
+    return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level": 1, "weapon": weap, "class": choice1, "race": choice2, "name": name}, inventory
 
 menu()
