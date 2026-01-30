@@ -15,22 +15,22 @@ rogue_skills   = {"Backstab", "Lockpick", "Evasion", "Shadow Step"}
 mage_skills    = {"Magic Missile", "Arcane Focus", "Mana Surge", "Fireball"}
 cleric_skills  = {"Heal", "Smite", "Divine Shield", "Greater Heal"}
 skill_data = {
-    "Power Strike": {"class": "Warrior", "min_level": 1, "prereq": set(), "required_stats": {"strength": 5}},
-    "Shield Block": {"class": "Warrior", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 4}},
-    "Battle Cry":   {"class": "Warrior", "min_level": 1, "prereq": set(), "required_stats": {"strength": 4}}, 
-    "Whirlwind":    {"class": "Warrior", "min_level": 5, "prereq": {"Power Strike"}, "required_stats": {"strength": 10}},
-    "Backstab":     {"class": "Rogue", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 5}},
-    "Lockpick":     {"class": "Rogue", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 4}},
-    "Evasion":      {"class": "Rogue", "min_level": 4, "prereq": set(), "required_stats": {"dexterity": 8}},
-    "Shadow Step":  {"class": "Rogue", "min_level": 5, "prereq": set(), "required_stats": {"dexterity": 10}},
-    "Magic Missile":{"class": "Mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 5}},
-    "Arcane Focus": {"class": "Mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 4}},
-    "Mana Surge":   {"class": "Mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 6}},
-    "Fireball":     {"class": "Mage", "min_level": 5, "prereq": {"Magic Missile"}, "required_stats": {"intelligence": 10}},
-    "Heal":         {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 5}},
-    "Smite":        {"class": "Cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 4}},
-    "Divine Shield":{"class": "Cleric", "min_level": 5, "prereq": set(), "required_stats": {"wisdom": 10}},
-    "Greater Heal": {"class": "Cleric", "min_level": 5, "prereq": {"Heal"}, "required_stats": {"wisdom": 12}},
+    "Power Strike": {"class": "warrior", "min_level": 1, "prereq": set(), "required_stats": {"strength": 5}},
+    "Shield Block": {"class": "warrior", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 4}},
+    "Battle Cry":   {"class": "warrior", "min_level": 1, "prereq": set(), "required_stats": {"strength": 4}}, 
+    "Whirlwind":    {"class": "warrior", "min_level": 5, "prereq": {"Power Strike"}, "required_stats": {"strength": 10}},
+    "Backstab":     {"class": "rogue", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 5}},
+    "Lockpick":     {"class": "rogue", "min_level": 1, "prereq": set(), "required_stats": {"dexterity": 4}},
+    "Evasion":      {"class": "rogue", "min_level": 4, "prereq": set(), "required_stats": {"dexterity": 8}},
+    "Shadow Step":  {"class": "rogue", "min_level": 5, "prereq": set(), "required_stats": {"dexterity": 10}},
+    "Magic Missile":{"class": "mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 5}},
+    "Arcane Focus": {"class": "mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 4}},
+    "Mana Surge":   {"class": "mage", "min_level": 1, "prereq": set(), "required_stats": {"intelligence": 6}},
+    "Fireball":     {"class": "mage", "min_level": 5, "prereq": {"Magic Missile"}, "required_stats": {"intelligence": 10}},
+    "Heal":         {"class": "cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 5}},
+    "Smite":        {"class": "cleric", "min_level": 1, "prereq": set(), "required_stats": {"wisdom": 4}},
+    "Divine Shield":{"class": "cleric", "min_level": 5, "prereq": set(), "required_stats": {"wisdom": 10}},
+    "Greater Heal": {"class": "cleric", "min_level": 5, "prereq": {"Heal"}, "required_stats": {"wisdom": 12}},
 }
 class_skills = {
     "warrior": warrior_skills,
@@ -72,7 +72,13 @@ xp_requirements = {
     30: 700000
 }
 
-def menu():
+def main(skillData):
+    while True:
+        menu(skillData)
+        cont = pf.idiot_proof_yes_no("Do you want to continue with the program? ")
+        if not cont: break
+
+def menu(skillData):
     print("1. Adjust Stats")
     print("2. Create Character")
     print("3. Adjust Character Inventory")
@@ -81,7 +87,7 @@ def menu():
 
     match action:
         case 1:
-            adjust_stats()
+            adjust_stats(skillData)
         case 2:
             char_name, stats[char_name], inventory = create_character()
             inventories[char_name] = inventory
@@ -95,7 +101,7 @@ def menu():
         
 
 
-def adjust_stats():
+def adjust_stats(skillData):
     character = pf.idiot_proof_specific("What characters stats do you want to adjust ", names, "You dont have a character with that name")
     stat_to_change = pf.idiot_proof_specific("What stat do you want to adjust?\n'xp' or 'weapon' ", ["xp", "weapon"], "Thats not a valid stat")
 
@@ -108,8 +114,8 @@ def adjust_stats():
             stats[character]["xp"] -= xp_requirements[stats[character]["level"]]
             stats[character]["level"] += 1
 
-            skill_menu(stats[character], skills)
-            print(stats[character]["level"])
+            skill_menu(stats[character], skills, skillData)
+            print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
 
 #KH 2nd skills
 
@@ -118,39 +124,44 @@ def ensure_skill_set(character, skills):
         character["skills"] = set()
 
 def give_starter_skills(character, skills):
+    global skill_data
     ensure_skill_set(character)
     for s in class_skills.get(character["class"], set()):
         if skill_data[s]["min_level"] == 1:
             skills[character] = s
 
 def can_unlock_skill(character, skill, skills):
+    global skill_data
     ensure_skill_set(character, skills)
     info = skill_data[skill]
 
-    if character["class"] != info["class"]:
+    if character["class"] != info["class"]: 
         return False
     if character["level"] < info["min_level"]:
         return False
     
-    for stat, req in info["required_stats"].items():
-        if stats[character].get(stat, 0) < req:
+    for req in info["required_stats"]:
+        if stats[character].get(req, 0) < req:
             return False
+            
     
     for p in info["prereq"]:
         if p not in skills[character]:
             return False
     return True
 
-def unlock_skill(character, skill, skills):
+def unlock_skill(character, skill, skills, skillData):
     ensure_skill_set(character)
     if skill in skills[character]:
         return False
-    if can_unlock_skill(character, skill):
+    if can_unlock_skill(character, skill, skillData):
         skills[character] = skill
         return True
     return False
 
 def unlock_level_milestone_skills(character, skills):
+    global class_skills
+    global skill_data
     ensure_skill_set(character)
     gained = []
     if character["level"] in {5, 10, 15, 20}:
@@ -161,7 +172,7 @@ def unlock_level_milestone_skills(character, skills):
                     gained.append(s)
     return gained
 
-def get_unlockable_skills(character, skills):
+def get_unlockable_skills(character, skills, class_skills):
     ensure_skill_set(character, skills)
     result = []
     for s in class_skills[character["class"]]:
@@ -170,10 +181,9 @@ def get_unlockable_skills(character, skills):
     return result
 
 
-def skill_menu(character, skills):
+def skill_menu(character, skills, class_skills):
     ensure_skill_set(character, skills)
-    if bool(skills[character]): print(f"Current skills: {skills[character["name"]]}")
-    op = get_unlockable_skills(character, skills)
+    op = get_unlockable_skills(character, skills, class_skills)
     if not bool(op):
         print("No unlockable skills")
         return
@@ -339,4 +349,4 @@ def create_character():
 
     return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level": 1, "weapon": weap, "class": choice1, "race": choice2, "name": name}, inventory
 
-menu()
+main(class_skills)
