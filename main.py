@@ -2,7 +2,7 @@ import pakistans_functions as pf
 import time as t
 import random as r
 
-#--- Character Stats ---
+#Character Stats
 # All character stats are referenced by name
 stats = {"John Test III": {'strength': 9, 'dexterity': 9, 'constitution': 15, 'intelligence': 15, 'charisma': 12, 'wisdom': 16, 'armor class': 7, 'xp': 0, 'weapon': 12, 'class': 'mage', 'race': 'elf'}}
 names = ["John Test III"]
