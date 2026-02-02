@@ -9,7 +9,7 @@ stats = {"John Test III": {'identity': make_identity("John Test III", 'elf', 'Ma
 names = ["John Test III"]
 
 inventories = {}
-
+#
 warrior_skills = {"Power Strike", "Shield Block", "Whirlwind", "Battle Cry"}
 rogue_skills   = {"Backstab", "Lockpick", "Evasion", "Shadow Step"}
 mage_skills    = {"Magic Missile", "Arcane Focus", "Mana Surge", "Fireball"}
