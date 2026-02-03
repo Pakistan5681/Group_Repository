@@ -207,12 +207,6 @@ def skill_menu(character):
             if unlock_skill(character, op[index]):
                 print("Unlocked:", op[index])
 
-
-def create_character():
-    pass
-
-
-
 def manage_inventory(names):
     def inventory(name1):
 
