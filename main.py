@@ -91,8 +91,8 @@ def adjust_stats():
                 stats[character]["xp"] -= xp_requirements[level]
                 stats[character]["level"] += 1
 
-                skill_menu(stats[character], skills)
-                print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
+                skill_menu(stats[character])
+                print(f"{character} is now level {stats[character]['level']}")
                 if xp <= xp_requirements[level]:
                     break
     else:
@@ -238,10 +238,10 @@ def manage_inventory(names):
             sell_item = input("Item to sell: ")
 
             if sell_item in inv["items"]:
-                xp += inv["items"][sell_item]
+                stats[name1]["xp"] += inv["items"][sell_item]
                 del inv["items"][sell_item]
                 print("Item sold")
-                print("Total XP:", xp)
+                print("Total XP:", stats[name1]["xp"])
             else:
                 print("Item si not found")
 
@@ -326,7 +326,7 @@ def create_character():
             t.sleep(0.7)
             print("It will now be added to your inventory.")
             weap = weapons[choice3]
-            inventory[choice3] = weap
+            inventories[name] = {"weapons": {choice3: weap}, "armor": {}, "items": {}}
             break
     t.sleep(0.7)
     print("Now you have made your basic character!")
@@ -338,7 +338,7 @@ def create_character():
 
     char = {"identity": identity, "strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level":1, "weapon": weap, "class": identity[2], "race": identity[1], "skills": set()}
     give_starter_skills(char)
-    return char, menu()
+    return char
 
 def menu():
     print("1. Adjust Stats")
@@ -351,10 +351,11 @@ def menu():
         case 1:
             adjust_stats()
         case 2:
-            char_name, stats[char_name] = create_character()
-            names.append(char_name)
-            print(stats[char_name])
-            n, rce, cls = stats[char_name]["identity"]
+            char = create_character()
+            name = char["identity"][0]
+            stats[name] = char
+            print(stats[name])
+            n, rce, cls = stats[name]["identity"]
             print("Identify tuple:", n, rce, cls)
         case 3:
             manage_inventory(names)
@@ -362,4 +363,5 @@ def menu():
             raise Exception("Something horrendous has occured. If you are recieving this message, we are cooked")
         
 
-menu()
+while True:
+    menu()
