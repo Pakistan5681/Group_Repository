@@ -84,17 +84,17 @@ def adjust_stats():
         xp = stats[character]["xp"]
         xp_to_add = pf.idiot_proof_general(f"How much xp do you want to add to {character}? ")
 
-        xp += xp_to_add
+        stats[character]["xp"] += xp_to_add
+        print(f"Current xp: {stats[character]['xp']}, Needed xp: {xp_requirements[level]}")
 
-        if xp >= xp_requirements[level]:
-            while True:
+
+        while stats[character]["xp"] >= xp_requirements[level]:
                 stats[character]["xp"] -= xp_requirements[level]
                 stats[character]["level"] += 1
 
+                level = stats[character]["level"]
+                print(f"{character} is now level {level}")
                 skill_menu(stats[character])
-                print(f"{character} is now level {stats[character]['level']}")
-                if xp <= xp_requirements[level]:
-                    break
     else:
         weapon = input("What weapon would you like to give your character? ")
 
