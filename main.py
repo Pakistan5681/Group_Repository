@@ -4,11 +4,11 @@ import random as r
 
 #--- Character Stats ---
 # All character stats are referenced by name
-stats = {"John": {'strength': 9, 'dexterity': 9, 'constitution': 15, 'intelligence': 15, 'charisma': 12, 'wisdom': 16, 'armor class': 7, 'xp': 0, "level": 1, 'weapon': 12, 'class': 'mage', 'race': 'elf', "name" : "John"}}
-skills = {"John": []}
-names = ["John"]
+stats = {}
+skills = {}
+names = []
 
-inventories = {"John" : ["Magic Missile", "Arcane Focus", "Mana Surge"]}
+inventories = {}
 
 warrior_skills = {"Power Strike", "Shield Block", "Whirlwind", "Battle Cry"}
 rogue_skills   = {"Backstab", "Lockpick", "Evasion", "Shadow Step"}
@@ -102,6 +102,8 @@ def menu(skillData):
 
 
 def adjust_stats(skillData):
+    global inventories
+    global stats
     character = pf.idiot_proof_specific("What characters stats do you want to adjust ", names, "You dont have a character with that name")
     stat_to_change = pf.idiot_proof_specific("What stat do you want to adjust?\n'xp' or 'weapon' ", ["xp", "weapon"], "Thats not a valid stat")
 
@@ -116,6 +118,12 @@ def adjust_stats(skillData):
 
             skill_menu(stats[character], skills, skillData)
             print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
+    else:
+        weapon = input("What weapon would you like to give your character? ")
+
+        stats[character]["weapon"] = weapon
+        print(f"{weapon} equipped")
+
 
 #KH 2nd skills
 
@@ -347,6 +355,6 @@ def create_character():
     t.sleep(0.7)
     print(f"Here are your final stats!\nStrength is {stren}\nDexterity is {dex}\nConstitution is {cons}\nIntelligence is {intell}\nCharisma is {rizz}\nWisdom is {wis}\nArmor Class is {ac}")
 
-    return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level": 1, "weapon": weap, "class": choice1, "race": choice2, "name": name}, inventory
+    return name, {"strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level": 1, "weapon": choice3, "class": choice1, "race": choice2, "name": name}, inventory
 
 main(class_skills)
