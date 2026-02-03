@@ -96,7 +96,7 @@ def menu():
         
 
 
-def adjust_stats(skillData):
+def adjust_stats():
     global inventories
     global stats
     character = pf.idiot_proof_specific("What characters stats do you want to adjust ", names, "You dont have a character with that name")
@@ -113,7 +113,7 @@ def adjust_stats(skillData):
             stats[character]["xp"] -= xp_requirements[level]
             stats[character]["level"] += 1
 
-            skill_menu(stats[character], skills, skillData)
+            skill_menu(stats[character], skills)
             print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
     else:
         weapon = input("What weapon would you like to give your character? ")
@@ -136,9 +136,6 @@ def give_starter_skills(character):
         if skill_data[s]["min_level"] == 1
     }
     character["skills"].update(starters)
-
-give_starter_skills(stats["John Test III"])
-print("John starter skills", stats["John Test III"]["skills"])
 
 def can_unlock_skill(character, skill):
     ensure_skill_set(character)
@@ -276,14 +273,7 @@ def manage_inventory(names):
         character_to_adjust = pf.idiot_proof_specific("What characters inventory do you want to adjust? ", names, "you dont have a character with that name")
         inventory(character_to_adjust)
 
-    #easy wy to use thic can be: 
-    ''' new_character = input("Enter new character name: ")
-    inventory(new_character)'''
-
-    '''characters[name] = {"hp": 100, "xp": 0}'''
-
 #EMH
-
 
 def create_character():
     print("Welcome to the character maker!")
@@ -364,9 +354,10 @@ def create_character():
     print(f"Here are your final stats!\nStrength is {stren}\nDexterity is {dex}\nConstitution is {cons}\nIntelligence is {intell}\nCharisma is {rizz}\nWisdom is {wis}\nArmor Class is {ac}")
 
     identity = make_identity(name, choice2, choice1.title())
+    names.append(name)
 
     char = {"identity": identity, "strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level":1, "weapon": weap, "class": identity[2], "race": identity[1], "skills": set()}
     give_starter_skills(char)
-    return name, char
+    return char, menu()
 
 menu()
