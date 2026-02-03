@@ -73,29 +73,6 @@ xp_requirements = {
     30: 700000
 }
 
-def menu():
-    print("1. Adjust Stats")
-    print("2. Create Character")
-    print("3. Adjust Character Inventory")
-    print(" ")
-    action = pf.idiot_proof_num_range("Type the number of the desired option ", 1, 3)
-
-    match action:
-        case 1:
-            adjust_stats()
-        case 2:
-            char_name, stats[char_name] = create_character()
-            names.append(char_name)
-            print(stats[char_name])
-            n, rce, cls = stats[char_name]["identity"]
-            print("Identify tuple:", n, rce, cls)
-        case 3:
-            manage_inventory(names)
-        case _:
-            raise Exception("Something horrendous has occured. If you are recieving this message, we are cooked")
-        
-
-
 def adjust_stats():
     global inventories
     global stats
@@ -109,12 +86,15 @@ def adjust_stats():
 
         xp += xp_to_add
 
-        if xp > xp_requirements[level]:
-            stats[character]["xp"] -= xp_requirements[level]
-            stats[character]["level"] += 1
+        if xp >= xp_requirements[level]:
+            while True:
+                stats[character]["xp"] -= xp_requirements[level]
+                stats[character]["level"] += 1
 
-            skill_menu(stats[character], skills)
-            print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
+                skill_menu(stats[character], skills)
+                print(f"{stats[character]["name"]} is now level {stats[character]["level"]}")
+                if xp <= xp_requirements[level]:
+                    break
     else:
         weapon = input("What weapon would you like to give your character? ")
 
@@ -359,5 +339,27 @@ def create_character():
     char = {"identity": identity, "strength": stren, "dexterity": dex, "constitution": cons, "intelligence": intell, "charisma": rizz, "wisdom": wis, "armor class": ac, "xp": 0, "level":1, "weapon": weap, "class": identity[2], "race": identity[1], "skills": set()}
     give_starter_skills(char)
     return char, menu()
+
+def menu():
+    print("1. Adjust Stats")
+    print("2. Create Character")
+    print("3. Adjust Character Inventory")
+    print(" ")
+    action = pf.idiot_proof_num_range("Type the number of the desired option ", 1, 3)
+
+    match action:
+        case 1:
+            adjust_stats()
+        case 2:
+            char_name, stats[char_name] = create_character()
+            names.append(char_name)
+            print(stats[char_name])
+            n, rce, cls = stats[char_name]["identity"]
+            print("Identify tuple:", n, rce, cls)
+        case 3:
+            manage_inventory(names)
+        case _:
+            raise Exception("Something horrendous has occured. If you are recieving this message, we are cooked")
+        
 
 menu()
